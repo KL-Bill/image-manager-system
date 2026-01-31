@@ -1,3 +1,3 @@
 window.APP_CONFIG = {
-  API_BASE: "https://comparison-philips-diversity-machinery.trycloudflare.com"
+  API_BASE: "https://telephone-workplace-dir-circles.trycloudflare.com"
 };

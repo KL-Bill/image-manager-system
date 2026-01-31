@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <b>Church Image Manager</b>
+      <span id="who" class="muted"></span>
+    </div>
+    <button id="logout">Logout</button>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <button class="navbtn" data-page="albums">Albums</button>
+      <button class="navbtn" data-page="groups">Post Groups</button>
+      <button class="navbtn" data-page="schedules">Schedules</button>
+      <button class="navbtn adminOnly" data-page="admin">Admin Review</button>
+      <button class="navbtn adminOnly" data-page="watermark">Watermark</button>
+    </nav>
+
+    <main class="content">
+      <section id="page-albums" class="page"></section>
+      <section id="page-groups" class="page hidden"></section>
+      <section id="page-schedules" class="page hidden"></section>
+      <section id="page-admin" class="page hidden"></section>
+      <section id="page-watermark" class="page hidden"></section>
+    </main>
+  </div>
+
+  <script src="./config.js"></script>
+  <script src="./utils.js"></script>
+  <script src="./pages/albums.js"></script>
+  <script src="./pages/groups.js"></script>
+  <script src="./pages/schedules.js"></script>
+  <script src="./pages/admin.js"></script>
+  <script src="./pages/watermark.js"></script>
+  <script>
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    if (!user) location.href = "./index.html";
+    document.getElementById("who").textContent = ` • ${user.name} (${user.role})`;
+
+    if (user.role !== "admin") {
+      document.querySelectorAll(".adminOnly").forEach(x => x.remove());
+    }
+
+    document.getElementById("logout").onclick = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      location.href = "./index.html";
+    };
+
+    function show(page) {
+      document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
+      document.getElementById(`page-${page}`).classList.remove("hidden");
+    }
+
+    document.querySelectorAll(".navbtn").forEach(btn => {
+      btn.onclick = async () => {
+        const page = btn.dataset.page;
+        show(page);
+        await window.PAGE_LOADERS[page]();
+      };
+    });
+
+    // default
+    show("albums");
+    window.PAGE_LOADERS["albums"]();
+  </script>
+</body>
+</html>

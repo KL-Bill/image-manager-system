@@ -1,3 +1,3 @@
 window.APP_CONFIG = {
-  API_BASE: "https://philosophy-loading-mins-beginning.trycloudflare.com"
+  API_BASE: "https://deployment-trusts-renew-doctor.trycloudflare.com"
 };

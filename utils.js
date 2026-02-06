@@ -38,3 +38,10 @@ function monthKeyNow() {
   const m = String(d.getMonth()+1).padStart(2,"0");
   return `${y}-${m}`;
 }
+
+// For <img> tags (cannot set Authorization header) we pass token in query string.
+function authImgUrl(path) {
+  const token = localStorage.getItem("token") || "";
+  const sep = path.includes("?") ? "&" : "?";
+  return window.APP_CONFIG.API_BASE + path + sep + "token=" + encodeURIComponent(token);
+}

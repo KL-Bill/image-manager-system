@@ -59,7 +59,7 @@ window.PAGE_LOADERS["admin"] = async function () {
       <div class="grid" id="grid">
         ${imgs.map(i => `
           <div class="thumb">
-            <img class="imgthumb" src="${window.APP_CONFIG.API_BASE}/api/images/${i.id}/thumb">
+            <img class="imgthumb" src="${authImgUrl(`/api/images/${i.id}/thumb`)}">
             <label>
               <input type="checkbox" class="pick" value="${i.id}" data-name="${i.original_filename.toLowerCase()}"/>
               ${i.original_filename}

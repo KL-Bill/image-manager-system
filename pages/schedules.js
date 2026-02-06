@@ -16,9 +16,51 @@ window.PAGE_LOADERS["schedules"] = async function () {
         <button id="add">Add</button>
       </div>
     ` : `<p class="muted">Read-only calendar.</p>`}
+    <div id="calendarHost"></div>
+    <hr/>
     <div id="list"></div>
   `;
 
+  function daysInMonth(y,m){ return new Date(y, m+1, 0).getDate(); }
+  function startDow(y,m){ return new Date(y, m, 1).getDay(); } // 0 Sun
+
+  function renderCalendar(host, year, monthIndex, schedules) {
+    const total = daysInMonth(year, monthIndex);
+    const start = startDow(year, monthIndex);
+
+    const byDay = {};
+    schedules.forEach(s => {
+      const d = new Date(s.scheduled_at);
+      const day = d.getDate();
+      byDay[day] = byDay[day] || [];
+      byDay[day].push(s);
+    });
+
+    const heads = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(h => `<div class="calhead">${h}</div>`).join("");
+
+    let cells = [];
+    for (let i=0;i<start;i++) cells.push(`<div class="calcell empty"></div>`);
+    for (let day=1; day<=total; day++) {
+      const items = (byDay[day] || []).slice(0,3).map(x =>
+        `<div class="calitem" title="${x.post_group_title}">${x.post_group_title}</div>`
+      ).join("");
+      const more = (byDay[day] && byDay[day].length>3) ? `<div class="muted">+${byDay[day].length-3} more</div>` : "";
+      cells.push(`
+        <div class="calcell">
+          <div class="calday">${day}</div>
+          ${items}${more}
+        </div>
+      `);
+    }
+
+    host.innerHTML = `<div class="calgrid">${heads}${cells.join("")}</div>`;
+  }
+
+  // render calendar for current month_key
+  const [yy, mm] = mk.split("-").map(Number);
+  renderCalendar(el.querySelector("#calendarHost"), yy, mm-1, rows);
+
+  // list view below
   const list = el.querySelector("#list");
   list.innerHTML = rows.map(s => `
     <div class="thumb">

@@ -9,13 +9,13 @@ window.PAGE_LOADERS["admin"] = async function () {
     <h2>Admin Review (${mk})</h2>
     <div class="row">
       <input id="gtitle" placeholder="New Post Group title"/>
-      <button id="gcreate">Create Group</button>
+      <button id="gcreate" class="primary">Create Group</button>
     </div>
     <hr/>
     <div class="row">
       <select id="albumSel"></select>
       <select id="groupSel"></select>
-      <button id="assign">Add selected images to group</button>
+      <button id="assign" class="primary">Add selected images to group</button>
     </div>
     <div id="imgs"></div>
   `;
@@ -48,19 +48,45 @@ window.PAGE_LOADERS["admin"] = async function () {
     const imgs = await api(`/api/albums/${albumId}/images`);
     const wrap = el.querySelector("#imgs");
     wrap.innerHTML = `
+      <div class="row">
+        <input id="search" placeholder="Search filename...">
+        <button id="all" class="primary">Select all</button>
+        <button id="none">Clear</button>
+        <span class="muted">Selected: <b id="selCount">0</b></span>
+      </div>
+
       <h3>Album Images</h3>
-      <div class="grid">
+      <div class="grid" id="grid">
         ${imgs.map(i => `
           <div class="thumb">
+            <img class="imgthumb" src="${window.APP_CONFIG.API_BASE}/api/images/${i.id}/thumb">
             <label>
-              <input type="checkbox" class="pick" value="${i.id}"/>
+              <input type="checkbox" class="pick" value="${i.id}" data-name="${i.original_filename.toLowerCase()}"/>
               ${i.original_filename}
             </label>
           </div>
         `).join("")}
       </div>
     `;
-  }
+
+    function updateCount(){
+      el.querySelector("#selCount").textContent = el.querySelectorAll(".pick:checked").length;
+    }
+    el.querySelectorAll(".pick").forEach(x => x.onchange = updateCount);
+
+    el.querySelector("#all").onclick = () => { el.querySelectorAll(".pick").forEach(x => x.checked = true); updateCount(); };
+    el.querySelector("#none").onclick = () => { el.querySelectorAll(".pick").forEach(x => x.checked = false); updateCount(); };
+
+    el.querySelector("#search").oninput = (e) => {
+      const q = e.target.value.toLowerCase();
+      el.querySelectorAll(".pick").forEach(chk => {
+        chk.closest(".thumb").style.display = chk.dataset.name.includes(q) ? "" : "none";
+      });
+      updateCount();
+    };
+
+    updateCount();
+}
 
   albumSel.onchange = loadAlbumImages;
 

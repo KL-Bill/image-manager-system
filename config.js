@@ -1,3 +1,3 @@
 window.APP_CONFIG = {
-  API_BASE: "https://try-struct-biographies-hitting.trycloudflare.com"
+  API_BASE: "https://partial-zum-leo-breach.trycloudflare.com"
 };

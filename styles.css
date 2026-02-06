@@ -127,7 +127,7 @@ button.danger{ background:rgba(251,113,133,.12); border-color:rgba(251,113,133,.
 .page{
   background:rgba(255,255,255,.035);
   border:1px solid var(--border);
-  padding:16px;
+  padding:22px;
   border-radius:var(--radius);
   box-shadow: var(--shadow);
 }
@@ -138,6 +138,7 @@ button.danger{ background:rgba(251,113,133,.12); border-color:rgba(251,113,133,.
   gap:14px;
   flex-wrap:wrap;
   align-items:center;
+  margin: 12px 0 18px;
 }
 .row > *{ flex:1; min-width:160px; }
 

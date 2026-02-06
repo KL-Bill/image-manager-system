@@ -1,3 +1,3 @@
 window.APP_CONFIG = {
-  API_BASE: "https://deployment-trusts-renew-doctor.trycloudflare.com"
+  API_BASE: "https://lesson-pit-plant-format.trycloudflare.com"
 };

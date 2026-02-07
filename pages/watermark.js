@@ -1,6 +1,8 @@
 window.PAGE_LOADERS["watermark"] = async function () {
   const el = document.getElementById("page-watermark");
   const s = await api("/api/watermark/settings");
+  const mk = monthKeyNow();
+  const albums = await api(`/api/albums?month=${mk}`);
 
   el.innerHTML = `
     <h2>Watermark Settings</h2>
@@ -31,6 +33,29 @@ window.PAGE_LOADERS["watermark"] = async function () {
     </div>
 
     <p class="muted">Current watermark path: ${s.watermark_image_path || "(none yet)"}</p>
+
+    <hr/>
+    <h3>Preview</h3>
+    <p class="muted">Pick any photo to see how the watermark will look before downloading.
+    Tip: adjust Position/Opacity/Scale, click Save, then hit Refresh Preview.</p>
+    <div class="toolbar">
+      <div class="field" style="min-width:320px;">
+        <label class="muted">Preview image</label>
+        <select id="previewSel"></select>
+      </div>
+      <button id="refresh" class="primary">Refresh Preview</button>
+    </div>
+
+    <div class="previewGrid">
+      <div class="previewCard">
+        <div class="muted">Original</div>
+        <img id="prevOriginal" class="previewImg" alt="Original preview" />
+      </div>
+      <div class="previewCard">
+        <div class="muted">With watermark</div>
+        <img id="prevWatermarked" class="previewImg" alt="Watermarked preview" />
+      </div>
+    </div>
   `;
 
   el.querySelector("#pos").value = s.position || "br";
@@ -42,6 +67,8 @@ window.PAGE_LOADERS["watermark"] = async function () {
     const opacity = Number(el.querySelector("#op").value);
     const scale = Number(el.querySelector("#sc").value);
     await api("/api/watermark/settings", { method:"PATCH", body:{ position, opacity, scale }});
+    // keep UX fast: refresh preview automatically (if any)
+    await refreshPreview();
     alert("Saved.");
   };
 
@@ -62,4 +89,30 @@ window.PAGE_LOADERS["watermark"] = async function () {
     alert("Watermark uploaded!");
     await window.PAGE_LOADERS["watermark"]();
   };
+
+  // Build preview options from first album in the selected month (simple + fast)
+  const previewSel = el.querySelector("#previewSel");
+  let previewImages = [];
+  if (albums.length) {
+    const imgs = await api(`/api/albums/${albums[0].id}/images`, { noLoading: true });
+    previewImages = imgs || [];
+  }
+
+  previewSel.innerHTML = previewImages.map(i => `<option value="${i.id}">${i.original_filename}</option>`).join("")
+    || `<option value="">No images available yet</option>`;
+
+  el.querySelector("#refresh").onclick = refreshPreview;
+
+  async function refreshPreview() {
+    const id = previewSel.value;
+    if (!id) return;
+    const pos = el.querySelector("#pos").value;
+    const op = el.querySelector("#op").value;
+    const sc = el.querySelector("#sc").value;
+    el.querySelector("#prevOriginal").src = authImgUrl(`/api/images/${id}/view`);
+    el.querySelector("#prevWatermarked").src = authImgUrl(`/api/images/${id}/watermarked?position=${encodeURIComponent(pos)}&opacity=${encodeURIComponent(op)}&scale=${encodeURIComponent(sc)}`);
+  }
+
+  // auto render if we have at least one image
+  if (previewImages.length) await refreshPreview();
 };

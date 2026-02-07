@@ -42,7 +42,7 @@ a:hover{ text-decoration:underline; }
   box-shadow:var(--shadow);
 }
 
-h1,h2,h3{ margin:0 0 12px; letter-spacing:.2px; }
+h1,h2,h3{ margin:0 0 14px; letter-spacing:.2px; }
 h2{ font-size:28px; }
 h3{ font-size:18px; color:#eaeef7; }
 
@@ -96,7 +96,7 @@ button.danger{ background:rgba(251,113,133,.12); border-color:rgba(251,113,133,.
   display:flex;
   min-height:calc(100vh - 60px);
   gap:18px;
-  padding:18px;
+  padding:22px;
 }
 
 .sidebar{
@@ -138,14 +138,36 @@ button.danger{ background:rgba(251,113,133,.12); border-color:rgba(251,113,133,.
   gap:14px;
   flex-wrap:wrap;
   align-items:center;
-  margin: 12px 0 18px;
+  margin: 10px 0 18px;
 }
 .row > *{ flex:1; min-width:160px; }
+
+.toolbar{
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  align-items:flex-end;
+  justify-content:space-between;
+  margin: 10px 0 18px;
+}
+.field{ display:flex; flex-direction:column; gap:6px; }
+.toggle{ display:flex; align-items:center; gap:10px; }
+.toggle input{ width:auto; }
+
+.sectionCard{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.03);
+  border-radius:16px;
+  padding:16px;
+  margin: 14px 0 18px;
+}
+.sectionHeader{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px; }
+.sectionTitle{ font-weight:800; font-size:14px; margin-bottom:4px; }
 
 hr{
   border:0;
   border-top:1px solid var(--border);
-  margin:14px 0;
+  margin:18px 0;
 }
 
 /* grid/cards */
@@ -159,8 +181,15 @@ hr{
   border:1px solid var(--border);
   background:rgba(255,255,255,.03);
   border-radius:14px;
-  padding:14px;
+  padding:16px;
 }
+
+.thumbMeta{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:10px; }
+.filename{ font-weight:700; font-size:12px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+.previewGrid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:16px; margin-top:14px; }
+.previewCard{ border:1px solid var(--border); background:rgba(255,255,255,.03); border-radius:16px; padding:14px; }
+.previewImg{ width:100%; height:280px; object-fit:contain; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.02); margin-top:10px; }
 
 .imgthumb{
   width:100%;

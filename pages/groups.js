@@ -6,16 +6,22 @@ window.PAGE_LOADERS["groups"] = async function () {
 
   el.innerHTML = `
     <h2>Post Groups (${mk})</h2>
-    <div class="row">
-      <label><input type="checkbox" id="wm" checked/> Include watermark</label>
-      <select id="pos">
+    <div class="toolbar">
+      <div class="toggle">
+        <input type="checkbox" id="wm" checked/>
+        <label for="wm">Include watermark</label>
+      </div>
+      <div class="field">
+        <label class="muted">Watermark position</label>
+        <select id="pos">
         <option value="">Default position</option>
         <option value="tl">Top-left</option>
         <option value="tr">Top-right</option>
         <option value="bl">Bottom-left</option>
         <option value="br">Bottom-right</option>
         <option value="c">Center</option>
-      </select>
+        </select>
+      </div>
     </div>
     <div id="groups-list"></div>
     <hr/>
@@ -37,14 +43,13 @@ window.PAGE_LOADERS["groups"] = async function () {
   });
 
   list.querySelectorAll("a[data-zip]").forEach(a => {
-    a.onclick = (e) => {
+    a.onclick = async (e) => {
       e.preventDefault();
       const groupId = a.dataset.zip;
       const wm = el.querySelector("#wm").checked ? "1" : "0";
       const pos = el.querySelector("#pos").value;
       const url = `${window.APP_CONFIG.API_BASE}/api/download/post-group/${groupId}.zip?watermark=${wm}${pos?`&position=${pos}`:""}`;
-      // open download with auth header isn't possible via normal link; simplest: fetch blob
-      downloadWithToken(url, `post_group_${groupId}.zip`);
+      await downloadWithProgress(url, `post_group_${groupId}.zip`, "Preparing ZIP...");
     };
   });
 
@@ -57,8 +62,11 @@ window.PAGE_LOADERS["groups"] = async function () {
       <div class="grid">
         ${imgs.map(i => `
           <div class="thumb">
-            <div class="muted">${i.original_filename}</div>
-            <button data-dl="${i.id}">Download</button>
+            <img class="imgthumb" src="${authImgUrl(`/api/images/${i.id}/thumb`)}" onerror="this.onerror=null;this.src='${authImgUrl(`/api/images/${i.id}/view`)}';" />
+            <div class="thumbMeta">
+              <div class="filename">${i.original_filename}</div>
+              <button class="primary" data-dl="${i.id}">Download</button>
+            </div>
           </div>
         `).join("")}
       </div>
@@ -70,20 +78,8 @@ window.PAGE_LOADERS["groups"] = async function () {
         const wm = el.querySelector("#wm").checked ? "1" : "0";
         const pos = el.querySelector("#pos").value;
         const url = `${window.APP_CONFIG.API_BASE}/api/download/image/${imgId}?watermark=${wm}${pos?`&position=${pos}`:""}`;
-        downloadWithToken(url, `image_${imgId}`);
+        downloadWithProgress(url, `image_${imgId}`, "Downloading image...");
       };
     });
-  }
-
-  async function downloadWithToken(url, filename){
-    const token = localStorage.getItem("token");
-    const r = await fetch(url, { headers: { Authorization: "Bearer " + token }});
-    if (!r.ok) return alert("Download failed");
-    const blob = await r.blob();
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(a.href);
   }
 };

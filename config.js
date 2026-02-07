@@ -1,3 +1,3 @@
 window.APP_CONFIG = {
-  API_BASE: "https://partial-zum-leo-breach.trycloudflare.com"
+  API_BASE: "https://thursday-betty-explore-strings.trycloudflare.com"
 };

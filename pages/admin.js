@@ -7,17 +7,39 @@ window.PAGE_LOADERS["admin"] = async function () {
 
   el.innerHTML = `
     <h2>Admin Review (${mk})</h2>
-    <div class="row">
-      <input id="gtitle" placeholder="New Post Group title"/>
-      <button id="gcreate" class="primary">Create Group</button>
+    <div class="sectionCard">
+      <div class="sectionHeader">
+        <div>
+          <div class="sectionTitle">1) Create a post group</div>
+          <div class="muted">A post group is a set of photos that will be posted together.</div>
+        </div>
+      </div>
+      <div class="row">
+        <input id="gtitle" placeholder="New Post Group title (e.g. Sunday Service Week 4)"/>
+        <button id="gcreate" class="primary">Create Group</button>
+      </div>
     </div>
-    <hr/>
-    <div class="row">
-      <select id="albumSel"></select>
-      <select id="groupSel"></select>
-      <button id="assign" class="primary">Add selected images to group</button>
+
+    <div class="sectionCard">
+      <div class="sectionHeader">
+        <div>
+          <div class="sectionTitle">2) Choose where to take images from</div>
+          <div class="muted">Select an album, then pick images below.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field" style="min-width:260px;">
+          <label class="muted">Album</label>
+          <select id="albumSel"></select>
+        </div>
+        <div class="field" style="min-width:260px;">
+          <label class="muted">Target post group</label>
+          <select id="groupSel"></select>
+        </div>
+        <button id="assign" class="primary" style="flex:1;">Add selected images to group</button>
+      </div>
+      <div id="imgs"></div>
     </div>
-    <div id="imgs"></div>
   `;
 
   const albumSel = el.querySelector("#albumSel");
